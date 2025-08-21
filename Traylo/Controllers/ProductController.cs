@@ -12,7 +12,7 @@ namespace Traylo.Controllers
         private readonly AppDbContext _context;
         public ProductController(AppDbContext context) => _context = context;
 
-        [Authorize(Roles = "Manager,Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var products = await _context.Products.ToListAsync();

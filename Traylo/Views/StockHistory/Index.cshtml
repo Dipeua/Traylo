@@ -4,12 +4,16 @@
 }
 
 <div class="container-fluid">
-
     <div class="mb-3">
-        <a class="btn btn-sm btn-success shadow-sm mb-3" asp-asp-controller="StockHistory" asp-action="AddCentralStock">Ajouter au central</a>
-        <a class="btn btn-sm btn-primary shadow-sm mb-3" asp-cpontroller="StockHistory" asp-action="DistributeToCity">Distribuer vers ville</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="btn btn-sm btn-success shadow-sm mb-3" asp-asp-controller="StockHistory" asp-action="AddCentralStock">Ajouter au central</a>
+            <a class="btn btn-sm btn-primary shadow-sm mb-3" asp-cpontroller="StockHistory" asp-action="DistributeToCity">Distribuer vers ville</a>
+
+        }
         <a class="btn btn-sm btn-info shadow-sm mb-3" asp-asp-controller="StockHistory" asp-action="DistributeToDeliveryPerson">Distribuer vers livreur</a>
     </div>
+    
 
     <div class="card shadow">
         <div class="card-header py-3 bg-primary text-white">
