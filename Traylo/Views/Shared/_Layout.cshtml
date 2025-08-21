@@ -24,6 +24,8 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
+        @inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper Html
+
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
@@ -34,42 +36,34 @@
                 <div class="sidebar-brand-text mx-3">Traylo <sup>v1.0.0</sup></div>
             </a>
 
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Tableau de bord -->
-            <li class="nav-item active">
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
                 <a class="nav-link" asp-controller="Home" asp-action="Index">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Tableau de bord</span>
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="StockHistory" asp-action="Index">
-                    <i class="fas fa-fw fa-history"></i>
-                    <span>Mouvements des stocks</span>
-                </a>
-            </li>
-
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Gestion</div>
 
-            <li class="nav-item">
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "City" ? "active" : "")">
                 <a class="nav-link" asp-controller="City" asp-action="Index">
                     <i class="fas fa-fw fa-city"></i>
                     <span>Villes</span>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User" ? "active" : "")">
                 <a class="nav-link" asp-controller="User" asp-action="Index">
                     <i class="fas fa-fw fa-user-tie"></i>
                     <span>Gérants</span>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DeliveryPerson" ? "active" : "")">
                 <a class="nav-link" asp-controller="DeliveryPerson" asp-action="Index">
                     <i class="fas fa-fw fa-truck"></i>
                     <span>Livreurs</span>
@@ -81,21 +75,37 @@
 
             @if (User.IsInRole("Admin"))
             {
-                <li class="nav-item">
+                <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Product" ? "active" : "")">
                     <a class="nav-link" asp-controller="Product" asp-action="Index">
                         <i class="fas fa-fw fa-box"></i>
                         <span>Produits</span>
                     </a>
-                </li>                
+                </li>
             }
 
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Rapports" asp-action="Index">
-                    <i class="fas fa-fw fa-file-alt"></i>
-                    <span>Rapports</span>
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockHistory" ? "active" : "")">
+                <a class="nav-link" asp-controller="StockHistory" asp-action="Index">
+                    <i class="fas fa-fw fa-history"></i>
+                    <span>Mouvements des stocks</span>
                 </a>
             </li>
 
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Rapports</div>
+
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Rapports" ? "active" : "")">
+                <a class="nav-link" asp-controller="Rapports" asp-action="Index">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Fiche de suivi</span>
+                </a>
+            </li>
+
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Delivery" ? "active" : "")">
+                <a class="nav-link" asp-controller="Delivery" asp-action="Index">
+                    <i class="fas fa-fw fa-truck"></i>
+                    <span>Tableau des livraisons</span>
+                </a>
+            </li>
 
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -104,6 +114,7 @@
             </div>
 
         </ul>
+
         <!-- End of Sidebar -->
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">

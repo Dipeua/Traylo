@@ -1,0 +1,66 @@
+﻿@model List<DeliveryTableViewModel>
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Tableau des livraisons</h1>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Tableau des livraisons</h6>
+            </div>
+
+            <div class="card-body table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th rowspan="2" class="align-middle">Produit</th>
+                            @foreach (var city in Model.First().QuantitiesByCityAndDeliveryPerson.Keys)
+                            {
+                                var livreurs = Model.First().QuantitiesByCityAndDeliveryPerson[city].Keys;
+                                <th colspan="@livreurs.Count">@city</th>
+                                <th rowspan="2" class="align-middle bg-primary">Total</th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var city in Model.First().QuantitiesByCityAndDeliveryPerson.Keys)
+                            {
+                                var livreurs = Model.First().QuantitiesByCityAndDeliveryPerson[city].Keys;
+                                foreach (var dp in livreurs)
+                                {
+                                    <th>@dp</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+                                <td>@product.ProductName</td>
+                                @foreach (var city in product.QuantitiesByCityAndDeliveryPerson.Keys)
+                                {
+                                    var deliveries = product.QuantitiesByCityAndDeliveryPerson[city];
+                                    foreach (var qty in deliveries.Values)
+                                    {
+                                        <td>@qty</td>
+                                    }
+                                    <td class="bg-light">@deliveries.Values.Sum()</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center p-4 text-muted">
+            Aucun produit distribué pour le moment.
+        </div>
+    }
+</div>
