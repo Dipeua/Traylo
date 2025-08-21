@@ -1,0 +1,72 @@
+﻿@model IEnumerable<City>
+
+@{
+    ViewData["Title"] = "Gestion des villes";
+}
+
+<div class="container-fluid">
+
+    <a asp-controller="City" asp-action="Create" class="btn btn-sm btn-primary shadow-sm mb-3">
+        <i class="fas fa-plus fa-sm text-white-50"></i> Ajouter une ville
+    </a>
+
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var city in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow h-100 border-0">
+                        <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
+                            <h6 class="m-0">@city.Name</h6>
+                            <span class="badge bg-warning text-dark">
+                                @(city.DeliveryPeople?.Count() ?? 0) livreur(s)
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            @if (city.DeliveryPeople != null && city.DeliveryPeople.Any())
+                            {
+                                <ul class="list-unstyled">
+                                    @foreach (var delivery in city.DeliveryPeople)
+                                    {
+                                        <li class="mb-2">
+                                            <i class="fas fa-user text-primary"></i>
+                                            <strong>@delivery.FullName</strong><br />
+                                            <small class="text-muted">
+                                                <i class="fas fa-phone"></i> @delivery.PhoneNumber
+                                            </small>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Aucun livreur actif</span>
+                            }
+                        </div>
+                        <div class="card-footer bg-light text-end">
+                            <a asp-controller="City" asp-action="Edit" asp-route-CityId="@city.CityId"
+                               class="btn btn-warning btn-sm me-2">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a asp-controller="City" asp-action="Details" asp-route-CityId="@city.CityId"
+                               class="btn btn-warning btn-sm me-2">
+                                <i class="fas fa-edit"></i> Details
+                            </a>
+                            <a asp-controller="City" asp-action="Delete" asp-route-CityId="@city.CityId"
+                               class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <div class="alert alert-info">Aucune ville pour le moment.</div>
+            </div>
+        }
+    </div>
+</div>

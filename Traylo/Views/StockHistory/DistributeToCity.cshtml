@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Distribuer plusieurs produits vers une ville";
+}
+
+<div class="container-fluid">
+    <h2>Distribuer plusieurs produits vers une ville</h2>
+
+    <form method="post" asp-action="DistributeMultipleToCity">
+        <div class="mb-3">
+            <label class="form-label">Ville</label>
+            <select name="cityId" class="form-control" required>
+                <option selected>- Choisir une ville -</option>
+                @foreach (var c in ViewBag.Cities)
+                {
+                    <option value="@c.CityId">@c.Name</option>
+                }
+            </select>
+        </div>
+
+        <table class="table table-bordered" id="productsTable">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select name="products[0].ProductId" class="form-control" required>
+                            @foreach (var p in ViewBag.Products)
+                            {
+                                <option value="@p.ProductId">@p.Name (Stock: @p.QuantityReste)</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="products[0].Quantity" class="form-control" min="1" required />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="button" id="addRow" class="btn btn-secondary mb-3">+ Ajouter un autre produit</button>
+        <br />
+
+        <a asp-controller="StockHistory" asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+        <button class="btn btn-primary" type="submit">Distribuer</button>
+    </form>
+</div>
+
+@section Scripts {<h6 class="mt-4">📦 Produits distribués vers cette ville</h6>
+
+@if (ViewBag.DistributedProducts != null && ViewBag.DistributedProducts.Any())
+{
+    <table class="table table-bordered">
+        <thead class="bg-light">
+            <tr>
+                <th>Produit</th>
+                <th>Quantité distribuée</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dp in ViewBag.DistributedProducts)
+            {
+                <tr>
+                    <td>@dp.Product.Name</td>
+                    <td>@dp.TotalQuantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-muted">Aucun produit distribué pour cette ville.</div>
+}
+
+    <script>
+        let rowIndex = 1;
+
+        document.getElementById("addRow").addEventListener("click", function () {
+            let tableBody = document.querySelector("#productsTable tbody");
+
+            let newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>
+                    <select name="products[${rowIndex}].ProductId" class="form-control" required>
+        @foreach (var p in ViewBag.Products)
+        {
+                            <option value="@p.ProductId">@p.Name (Stock: @p.QuantityReste)</option>
+        }
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="products[${rowIndex}].Quantity" class="form-control" min="1" required />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+            rowIndex++;
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeRow")) {
+                e.target.closest("tr").remove();
+            }
+        });
+    </script>
+}

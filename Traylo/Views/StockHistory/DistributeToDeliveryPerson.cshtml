@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Distribuer vers livreur";
+}
+
+<div class="container-fluid">
+    <h2>Distribuer plusieurs produits à un livreur</h2>
+
+    <form method="post" asp-action="DistributeMultipleToDeliveryPerson">
+        <div class="mb-3">
+            <label class="form-label">Livreur</label>
+            <select name="deliveryPersonId" class="form-control" required>
+                @foreach (var d in ViewBag.DeliveryPeople)
+                {
+                    <option value="@d.DeliveryPersonId">@d.FullName (@d.City?.Name)</option>
+                }
+            </select>
+        </div>
+
+        <table class="table table-bordered" id="productsTable">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select name="products[0].ProductId" class="form-control" required>
+                            @foreach (var p in ViewBag.Products)
+                            {
+                                <option value="@p.ProductId">@p.Name (Stock: @p.QuantityReste)</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="products[0].Quantity" class="form-control" min="1" required />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="button" id="addRow" class="btn btn-secondary mb-3">+ Ajouter un produit</button>
+
+        @* <div class="mb-3">
+            <label class="form-label">Note</label>
+            <textarea name="note" class="form-control"></textarea>
+        </div> *@
+        <br />
+
+        <a asp-controller="StockHistory" asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+        <button class="btn btn-primary" type="submit">Distribuer</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        let rowIndex = 1;
+
+        document.getElementById("addRow").addEventListener("click", function () {
+            let tableBody = document.querySelector("#productsTable tbody");
+
+            let newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>
+                    <select name="products[${rowIndex}].ProductId" class="form-control" required>
+        @foreach (var p in ViewBag.Products)
+        {
+                                    <option value="@p.ProductId">@p.Name (Stock: @p.QuantityReste)</option>
+        }
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="products[${rowIndex}].Quantity" class="form-control" min="1" required />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+            rowIndex++;
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeRow")) {
+                e.target.closest("tr").remove();
+            }
+        });
+    </script>
+}

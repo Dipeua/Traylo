@@ -1,0 +1,38 @@
+﻿@model DeliveryPerson
+
+@{
+    ViewData["Title"] = "Supprimer un livreur";
+}
+
+<div class="container-fluid">
+    <div tabindex="-1" role="dialog" aria-labelledby="addCityModalLabel">
+        <div>
+            <div>
+                <form method="post">
+                    <div>
+                        <h5 class="modal-title">Supprimer un livreur</h5>
+                        <button type="button" class="close text-white">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="FullName"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="Nom de la ville" required disabled>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="PhoneNumber"></label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="Numero de telephone" required>
+                        </div>
+                    </div>
+                    <div>
+                        <a type="button" class="btn btn-secondary" asp-controller="DeliveryPerson" asp-action="Index">Annuler</a>
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

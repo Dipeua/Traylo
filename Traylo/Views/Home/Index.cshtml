@@ -1,0 +1,131 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Tableau de bord";
+}
+
+<div class="container-fluid">
+
+    <!-- Titre -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Tableau de bord</h1>
+    </div>
+
+    <!-- Cartes statistiques -->
+    <div class="row">
+
+        <!-- Villes -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Villes actives
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Cites.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-city fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Produits -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Produits en stock
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalProducts</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Livreurs -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Livreurs actifs</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.DeliveryPersons.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-truck fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historique -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Mouvements du jour
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.StockHistorys.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-history fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphique -->
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Stock mensuel</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="myAreaChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des villes -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Villes</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        @if (Model.Cites != null && Model.Cites.Any())
+                        {
+                            @foreach (var city in Model.Cites)
+                            {
+
+                                <li class="list-group-item text-center">@city.Name</li>
+                            }
+                        }
+                        else
+                        {
+
+                            <li class="list-group-item text-center">Aucune ville pour le moment</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

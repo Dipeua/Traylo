@@ -1,0 +1,215 @@
+﻿@model List<DeliveryPerson>
+
+@{
+    ViewData["Title"] = "Rapports des stocks";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Rapports des stocks</h1>
+    </div>
+
+    <div id="livreurSelectContainer" class="mb-4" style="max-width: 500px;">
+        @* <p class="mb-4">Choisissez un livreur :</p> *@
+        <select id="livreurSelect" class="form-control">
+            <option value="">-- Choisissez un livreur --</option>
+            @foreach (var d in Model)
+            {
+                <option value="@d.DeliveryPersonId">@d.FullName (@d.City?.Name)</option>
+            }
+        </select>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Fiche de suivi</h6>
+                    <div>
+                        <button type="button" class="btn btn-primary mr-2" id="btnSave">
+                            <i class="fas fa-save mr-1"></i> Enregistrer
+                        </button>
+                        <button type="button" class="btn btn-warning" id="btnEdit">
+                            <i class="fas fa-edit mr-1"></i> Modifier
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h2 class="text-center">ETABLISSEMENT SABENI</h2>
+                        <h3 class="text-center mb-3">FICHE DE SUIVI DES MOUVEMENTS DU LIVREUR</h3>
+                        <p><strong>Semaine du :</strong> @DateTime.Now.ToString("dd/MM/yyyy")</p>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped text-center" id="tableSuivi">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Produit</th>
+                                        <th>SI</th>
+                                        <th>Entrées</th>
+                                        <th>Total</th>
+                                        <th>Sorties</th>
+                                        <th>SF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="7">Veuillez sélectionner un livreur.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    // Transforme les données réelles en format JS compatible
+    const dataLivreurs = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        Model.ToDictionary(
+            d => d.DeliveryPersonId.ToString(),
+            d => d.StockHistories.Select(sh => new {
+                date = sh.Date.ToString("dd/MM/yyyy"),
+                produit = sh.Product.Name,
+                si = sh.QuantityChange,
+                entrees = 0,
+                total = sh.QuantityChange,
+                sorties = 0,
+                sf = sh.QuantityChange
+            }).ToList()
+        )
+    ));
+
+    const tbody = document.querySelector('#tableSuivi tbody');
+    const btnEdit = document.getElementById('btnEdit');
+    let editing = false;
+    let currentLivreur = null;
+
+    function remplirTableau(livreurId) {
+        tbody.innerHTML = '';
+        editing = false;
+        btnEdit.innerHTML = '<i class="fas fa-edit mr-1"></i> Modifier';
+
+        if (!livreurId || !dataLivreurs[livreurId]) {
+            tbody.innerHTML = '<tr><td colspan="7">Aucun produit livré pour ce livreur.</td></tr>';
+            return;
+        }
+
+        currentLivreur = livreurId;
+        const lignes = dataLivreurs[livreurId];
+        const date = lignes[0].date;
+
+        lignes.forEach((ligne, index) => {
+            const tr = document.createElement('tr');
+
+            if (index === 0) {
+                const tdDate = document.createElement('td');
+                tdDate.textContent = date;
+                tdDate.rowSpan = lignes.length;
+                tr.appendChild(tdDate);
+            }
+
+            tr.innerHTML += `
+                <td>${ligne.produit}</td>
+                <td class="editable-cell">${ligne.si}</td>
+                <td class="editable-cell">${ligne.entrees}</td>
+                <td>${ligne.total}</td>
+                <td class="editable-cell">${ligne.sorties}</td>
+                <td>${ligne.sf}</td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+        setCellsEditable(false);
+    }
+
+    function setCellsEditable(state) {
+        const cells = tbody.querySelectorAll('.editable-cell');
+        cells.forEach(cell => {
+            cell.contentEditable = state;
+            if (state) {
+                cell.classList.add('border', 'border-warning');
+                cell.style.backgroundColor = '#fff3cd';
+                cell.style.cursor = 'text';
+            } else {
+                cell.classList.remove('border', 'border-warning');
+                cell.style.backgroundColor = '';
+                cell.style.cursor = '';
+            }
+        });
+    }
+
+    // Calcul automatique Total et SF
+    tbody.addEventListener('input', function(e) {
+        if (!editing) return;
+        const cell = e.target;
+        if (!cell.classList.contains('editable-cell')) return;
+
+        const tr = cell.parentElement;
+        const tds = tr.querySelectorAll('td');
+        const hasDate = tds[0].rowSpan > 1 || /\d{2}\/\d{2}\/\d{4}/.test(tds[0].textContent);
+        const baseIndex = hasDate ? 2 : 1;
+
+        const si = parseInt(tds[baseIndex].textContent) || 0;
+        const entrees = parseInt(tds[baseIndex+1].textContent) || 0;
+        const sorties = parseInt(tds[baseIndex+3].textContent) || 0;
+
+        const total = si + entrees;
+        const sf = total - sorties;
+
+        tds[baseIndex+2].textContent = total;
+        tds[baseIndex+4].textContent = sf;
+    });
+
+    document.getElementById('livreurSelect').addEventListener('change', function() {
+        remplirTableau(this.value);
+    });
+
+    btnEdit.addEventListener('click', function() {
+        if (!currentLivreur) { alert('Veuillez sélectionner un livreur.'); return; }
+
+        if (!editing) {
+            editing = true;
+            btnEdit.innerHTML = '<i class="fas fa-check mr-1"></i> Valider';
+            setCellsEditable(true);
+        } else {
+            editing = false;
+            btnEdit.innerHTML = '<i class="fas fa-edit mr-1"></i> Modifier';
+            setCellsEditable(false);
+
+            // Optionnel: Mettre à jour dataLivreurs avec les valeurs modifiées
+            const lignes = tbody.querySelectorAll('tr');
+            const data = [];
+            lignes.forEach((tr, index) => {
+                if (tr.querySelector('td[colspan]')) return;
+
+                const dateCell = (index === 0) ? tr.querySelector('td') : null;
+                const hasDate = dateCell != null;
+                const baseIndex = hasDate ? 1 : 0;
+                const tds = tr.querySelectorAll('td');
+
+                const produit = tds[baseIndex].textContent.trim();
+                const si = parseInt(tds[baseIndex+1].textContent.trim()) || 0;
+                const entrees = parseInt(tds[baseIndex+2].textContent.trim()) || 0;
+                const sorties = parseInt(tds[baseIndex+4].textContent.trim()) || 0;
+                const total = si + entrees;
+                const sf = total - sorties;
+
+                tds[baseIndex+3].textContent = total;
+                tds[baseIndex+5].textContent = sf;
+
+                data.push({ date: dateCell? dateCell.textContent.trim():'', produit, si, entrees, total, sorties, sf });
+            });
+
+            dataLivreurs[currentLivreur] = data;
+        }
+    });
+
+    remplirTableau(null);
+</script>
+}

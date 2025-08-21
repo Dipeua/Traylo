@@ -1,0 +1,62 @@
+﻿@model User
+
+@{
+    ViewData["Title"] = "Modifier un gerant";
+}
+
+<div class="container-fluid">
+    <div tabindex="-1" role="dialog" aria-labelledby="addCityModalLabel">
+        <div>
+            <div>
+                <form method="post">
+                    <input type="hidden" asp-for="UserId" />
+                    <div>
+                        <h5 class="modal-title">Modifier un gerant</h5>
+                        <button type="button" class="close text-white">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="Username"></label>
+                            <input asp-for="Username" class="form-control" placeholder="Nom du gerant" required>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="PasswordHash"></label>
+                            <input asp-for="PasswordHash" class="form-control" placeholder="Mot de passe" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select asp-for="Role" class="form-control">
+                            <option selected>---</option>
+                            @foreach (var r in ViewBag.Roles)
+                            {
+                                <option value="@r">@r</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Ville (si Manager)</label>
+                        <select asp-for="CityId" class="form-control">
+                            <option selected>- Choisir sir une ville -</option>
+                            @foreach (var c in ViewBag.Cities)
+                            {
+                                <option value="@c.CityId">@c.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div>
+                        <a type="button" class="btn btn-secondary" asp-controller="User" asp-action="Index">Annuler</a>
+                        <button type="submit" class="btn btn-info">Modifier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
