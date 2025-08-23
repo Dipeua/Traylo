@@ -1,4 +1,5 @@
-﻿@{
+﻿@* @model AccountController.LoginViewModel *@
+@{
     Layout = "_LayoutLogin";
     ViewData["Title"] = "Connexion";
 }
@@ -7,17 +8,114 @@
     <h1 class="h4 text-gray-900 mb-4">Connexion à Traylo</h1>
 </div>
 
-@if (ViewBag.Error != null)
+@if (!ViewData.ModelState.IsValid)
 {
-    <div class="alert alert-danger">@ViewBag.Error</div>
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
 }
 
-<form method="post" asp-controller="Account" asp-action="Login">
+<form method="post" asp-controller="Account" asp-action="Login" id="loginForm">
+    @Html.AntiForgeryToken()
+
     <div class="form-group mb-3">
-        <input type="text" class="form-control form-control-user" id="username" name="username" placeholder="Nom d'utilisateur" required />
+        <input type="text" name="username" class="form-control form-control-user @(ViewData.ModelState["Username"]?.Errors.Count > 0 ? "is-invalid" : "")"
+               placeholder="Nom d'utilisateur"
+               autocomplete="username"
+               required />
     </div>
+
     <div class="form-group mb-3">
-        <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Mot de passe" required />
+        <input type="password" name="password" class="form-control form-control-user @(ViewData.ModelState["Password"]?.Errors.Count > 0 ? "is-invalid" : "")"
+               placeholder="Mot de passe"
+               autocomplete="current-password"
+               required />
     </div>
-    <button type="submit" class="btn btn-primary btn-user btn-block">Se connecter</button>
+
+    <button type="submit" class="btn btn-primary btn-user btn-block" id="loginButton">
+        <span class="button-text">Se connecter</span>
+        <span class="spinner-border spinner-border-sm d-none" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </span>
+    </button>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        const button = document.getElementById('loginButton');
+        const buttonText = button.querySelector('.button-text');
+        const spinner = button.querySelector('.spinner-border');
+
+        form.addEventListener('submit', function(e) {
+            // Désactiver le bouton et afficher le spinner
+            button.disabled = true;
+            buttonText.textContent = 'Connexion en cours...';
+            spinner.classList.remove('d-none');
+        });
+
+        // Validation côté client améliorée
+        const usernameInput = document.querySelector('input[name="Username"]');
+        const passwordInput = document.querySelector('input[name="Password"]');
+
+        function validateUsername() {
+            const username = usernameInput.value.trim();
+            const feedback = usernameInput.parentNode.querySelector('.invalid-feedback');
+
+            if (username.length < 3) {
+                usernameInput.classList.add('is-invalid');
+                if (feedback) feedback.textContent = 'Le nom d\'utilisateur doit contenir au moins 3 caractères';
+                return false;
+            } else {
+                usernameInput.classList.remove('is-invalid');
+                usernameInput.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        function validatePassword() {
+            const password = passwordInput.value;
+            const feedback = passwordInput.parentNode.querySelector('.invalid-feedback');
+
+            if (password.length < 6) {
+                passwordInput.classList.add('is-invalid');
+                if (feedback) feedback.textContent = 'Le mot de passe doit contenir au moins 6 caractères';
+                return false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+                passwordInput.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        usernameInput.addEventListener('blur', validateUsername);
+        passwordInput.addEventListener('blur', validatePassword);
+
+        // Validation avant soumission
+        form.addEventListener('submit', function(e) {
+            const isUsernameValid = validateUsername();
+            const isPasswordValid = validatePassword();
+
+            if (!isUsernameValid || !isPasswordValid) {
+                e.preventDefault();
+                button.disabled = false;
+                buttonText.textContent = 'Se connecter';
+                spinner.classList.add('d-none');
+            }
+        });
+
+        // Auto-focus sur le champ username
+        usernameInput.focus();
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
