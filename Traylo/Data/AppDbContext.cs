@@ -29,6 +29,14 @@ namespace Traylo.Data
                 new User
                 {
                     UserId = 2,
+                    Username = "Dipeua",
+                    PasswordHash = "admin",
+                    Role = UserRole.Admin,
+                    CityId = null
+                },
+                new User
+                {
+                    UserId = 3,
                     Username = "Stephanie",
                     PasswordHash = "manager",
                     Role = UserRole.Manager,

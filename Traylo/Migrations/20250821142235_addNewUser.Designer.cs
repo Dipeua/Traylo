@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Traylo.Data;
 
@@ -10,9 +11,11 @@ using Traylo.Data;
 namespace Traylo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250821142235_addNewUser")]
+    partial class addNewUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -54,45 +57,6 @@ namespace Traylo.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("DeliveryPeople");
-                });
-
-            modelBuilder.Entity("Traylo.Models.DeliveryPersonTracking", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DeliveryPersonId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Entrees")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Sorties")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("StockFinal")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("StockInitial")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Total")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeliveryPersonId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("DeliveryPersonTrackings");
                 });
 
             modelBuilder.Entity("Traylo.Models.Product", b =>
@@ -268,25 +232,6 @@ namespace Traylo.Migrations
                         .IsRequired();
 
                     b.Navigation("City");
-                });
-
-            modelBuilder.Entity("Traylo.Models.DeliveryPersonTracking", b =>
-                {
-                    b.HasOne("Traylo.Models.DeliveryPerson", "DeliveryPerson")
-                        .WithMany()
-                        .HasForeignKey("DeliveryPersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Traylo.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DeliveryPerson");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Traylo.Models.Product", b =>

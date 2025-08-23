@@ -11,7 +11,7 @@ using Traylo.Data;
 namespace Traylo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250821024212_init")]
+    [Migration("20250821134600_init")]
     partial class init
     {
         /// <inheritdoc />

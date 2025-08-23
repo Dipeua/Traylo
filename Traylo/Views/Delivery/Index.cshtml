@@ -1,8 +1,14 @@
 ﻿@model List<DeliveryTableViewModel>
+@{
+    ViewData["Title"] = "Tableau des livraisons";
+}
 
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Tableau des livraisons</h1>
+        <div>
+            <a asp-controller="Delivery" asp-action="Index" class="btn btn-primary me-2"><i class="fas fa-download me-1"></i>Telecharger le fichier</a>
+        </div>
     </div>
 
     @if (Model != null && Model.Any())
