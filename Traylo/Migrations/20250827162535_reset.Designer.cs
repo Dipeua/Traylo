@@ -11,8 +11,8 @@ using Traylo.Data;
 namespace Traylo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250821134600_init")]
-    partial class init
+    [Migration("20250827162535_reset")]
+    partial class reset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -210,6 +210,13 @@ namespace Traylo.Migrations
                         new
                         {
                             UserId = 2,
+                            PasswordHash = "admin",
+                            Role = 0,
+                            Username = "Dipeua"
+                        },
+                        new
+                        {
+                            UserId = 3,
                             PasswordHash = "manager",
                             Role = 1,
                             Username = "Stephanie"

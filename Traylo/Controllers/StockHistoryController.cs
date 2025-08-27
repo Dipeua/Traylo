@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Traylo.Data;
 using Traylo.Models;
+using Traylo.Models.Dto;
 
 namespace Traylo.Controllers
 {
@@ -33,12 +34,7 @@ namespace Traylo.Controllers
             return View();
         }
 
-        public class CentralStockDto
-        {
-            public int ProductId { get; set; }
-            public int Quantity { get; set; }
-        }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -133,12 +129,7 @@ namespace Traylo.Controllers
             return View();
         }
 
-        public class ProductDistributionDto
-        {
-            public int ProductId { get; set; }
-            public int Quantity { get; set; }
-        }
-
+        
         [HttpPost]
         [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> DistributeMultipleToDeliveryPerson(

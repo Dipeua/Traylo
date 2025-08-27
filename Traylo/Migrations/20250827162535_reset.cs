@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Traylo.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class reset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -145,7 +145,8 @@ namespace Traylo.Migrations
                 values: new object[,]
                 {
                     { 1, null, "admin", 0, "Paulin" },
-                    { 2, null, "manager", 1, "Stephanie" }
+                    { 2, null, "admin", 0, "Dipeua" },
+                    { 3, null, "manager", 1, "Stephanie" }
                 });
 
             migrationBuilder.CreateIndex(
