@@ -71,16 +71,7 @@ namespace Traylo.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int DeliveryPersonsId)
         {
-            var dp = await _context.DeliveryPeople.FindAsync(DeliveryPersonsId);
-            if (dp == null) return NotFound();
-            return View(dp);
-        }
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteConfirmed(int DeliveryPersonsId)
-        {
             var dp = await _context.DeliveryPeople.FindAsync(DeliveryPersonsId);
             if (dp != null) _context.DeliveryPeople.Remove(dp);
             await _context.SaveChangesAsync();
